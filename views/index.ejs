@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+    <title>Mort-Gauge</title>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" href="/browse">View Listings</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="card mt-4" style="width:100%;">
+            <div class="card-header text-center">
+                <h1>Calculate / Track Your Mortgages</h1>
+            </div>
+            <div class="card-body my-4 mx-4">
+                <form action="/save" method="POST" id="form">
+
+                    <div class="row justify-content-center">
+                        <div class="col-4 justify-content-center input-group input-group-lg mb-2">
+                            <label for="DownPayment" class="mx-4">Down Payment </label><br>
+                            <input required type="text" class="mx-2" id="DownPayment" name="DownPayment"
+                                placeholder="$60,000">
+                            <input type="text" id="DownPercent" name="DownPercent" value="20%"
+                                onchange="percentController()">
+                        </div>
+
+                        <div class=" col-4 input-group justify-content-center col-form-label col-form-label mb-2">
+                            <label for="HomeValue" class="mx-4">Home Value</label><br>
+                            <input type="text" class="mx-4" disabled id="HomeValue" name="HomeValue"
+                                placeholder="<%=listing.HomeValue%>" onchange="sliderControls(this.value),
+                            downControls(this.value)">
+                            <input type="range" id="HomeSlider" step="5000" min="50000" max="1000000" name="HomeSlider"
+                                value="<%=listing.HomeSlider%>" oninput="sliderControls(this.value),
+                            downControls(this.value)">
+                        </div>
+                        <div class=" col-4 input-group justify-content-center col-form-label col-form-label mx-2 mb-2">
+                            <label for="Interest Rate" class="mx-4">Interest Rate</label><br>
+                            <input type="text" class="mx-4" disabled id="InterestValue" name="InterestValue"
+                                placeholder="<%=listing.InterestRate%>">
+                            <input type="range" id="InterestSlider" step=".5" min="1" max="10" name="InterestSlider"
+                                value="4" oninput="interestControls(this.value)"">
+            </div>
+            <div class=" col-4 input-group justify-content-center col-form-label col-form-label mx-2 mb-2">
+                            <label for="Mortgage" class="mx-4">Mortgage Estimation</label><br>
+                            <input type="text" id="Mortgage" name="Mortgage" disabled>
+                            <select type="dropdown" class="mx-4" id="Years" name="Years" oninput="mortgageUpdate()">
+                                <option value="360">Loan Length</option>
+                                <option value="360">30-year fixed</option>
+                                <option value="180">15-year fixed</option>
+                            </select>
+                        </div>
+                        <div
+                            class="mt-4 col-sm-2 input-group justify-content-center col-form-label col-form-label-sm mx-2 mb-2">
+                            <input required class="mx-2" type="text" id="Title" name="Title"
+                                placeholder="<%=listing.Title%>">
+                            <input type="text" class="mx-2" id="listingUrl" name="listingUrl"
+                                placeholder="<%=listing.Url%>">
+                            <button type="submit" form="form" class="btn btn-primary mx-2"
+                                onclick="return confirm('Saved listings are publicly viewable. Please be sure not to include any personal details in your saved listings!');">Save
+                                This Listing</button>
+                        </div>
+
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <h1>Have Room-mates?</h1>
+                <label for="rent-split">Rent Split</label>
+                <input type="text" id="rent-split" disabled>
+                <label for="room-mates">Room Mates</label>
+                <input type="number" id="room-mates" value="1" oninput="mortgageUpdate()">
+                <p class="my-2">For your privacy, room-mate details will not be saved to listings.</p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    let slider = document.getElementById('HomeSlider').value
+    percentController()
+
+    function sliderControls(value) {
+        let nums = document.getElementById('HomeValue')
+        value = Number(value).toLocaleString('en')
+        nums.value = "$" + value
+        mortgageUpdate()
+    }
+
+    function downControls(value) {
+        let downPayment = document.getElementById('DownPayment')
+        let downPercent = document.getElementById('DownPercent')
+        let percent = downPercent.value
+        percent = downPercent.value.toString().replace(/\D/g, '')
+        percent = percent / 100;
+        downPayment.value = "$" + percent * value
+        mortgageUpdate()
+    }
+
+    function percentController() {
+        let downPercent = document.getElementById('DownPercent')
+        downPercent.value = downPercent.value.toString().replace(/\D/g, '') + "%"
+        downControls(slider)
+        mortgageUpdate()
+
+    }
+    function interestControls(value) {
+        let nums = document.getElementById('InterestValue')
+        nums.value = value + "%"
+        mortgageUpdate()
+    }
+
+    function mortgageUpdate() {
+        let hValue = document.getElementById('HomeSlider').value
+        let dValue = document.getElementById('DownPayment').value
+        let nValue = document.getElementById('Years').value
+        let iValue = (document.getElementById('InterestSlider').value / 100) / 12
+        let rentSplit = document.getElementById('rent-split')
+        let roomMates = document.getElementById('room-mates').value
+
+        hValue = hValue.toString().replace(/\D/g, '')
+        dValue = dValue.toString().replace(/\D/g, '')
+        nValue = nValue.toString().replace(/\D/g, '')
+
+        let mortgage = document.getElementById('Mortgage')
+
+        let pValue = hValue - dValue
+
+        let final = (iValue * pValue) / (1 - (Math.pow((1 + iValue), (-nValue))))
+        value = Number(final).toLocaleString('en')
+        mortgage.value = "$" + final.toFixed(2)
+        rentSplit.value = "$" + (final.toFixed(2) / roomMates)
+
+    }
+</script>
