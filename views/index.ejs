@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <label for="HomeSlider" class=""></label><br>
-                                <input class="form-control" type="range" id="HomeSlider" step="5000" min="50000"
+                                <input class="form-range" type="range" id="HomeSlider" step="5000" min="50000"
                                     max="1000000" name="HomeSlider" value="<%=listing.HomeSlider%>" oninput="sliderControls(this.value),
                             downControls(this.value)">
                             </div>
@@ -76,8 +76,9 @@
                             </div>
                             <div class="col-sm-2">
                                 <label for="InterestSlider" class=""></label><br>
-                                <input class="form-control" type="range" id="InterestSlider" step=".5" min="1" max="10"
-                                    name="InterestSlider" value="4" oninput="interestControls(this.value)"">
+                                <input class="form-range" type="range" id="InterestSlider" step=".5" min="1" max="10"
+                                    name="InterestSlider" value="<%=listing.InterestRate%>"
+                                    oninput="interestControls(this.value)"">
                             </div>
                             
                         </div>
@@ -133,6 +134,7 @@
 
 <script>
     let slider = document.getElementById('HomeSlider').value
+    let interest = document.getElementById('in')
     percentController()
 
     function sliderControls(value) {
