@@ -23,9 +23,10 @@ const mortgageSchema = new mongoose.Schema({
     InterestRate: {
         type: String,
         required: true
+    },
+    DownPercent: {
+        type: String
     }
-
-
 })
 
 module.exports = mongoose.model('Mortgage', mortgageSchema)
