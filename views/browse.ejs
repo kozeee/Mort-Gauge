@@ -35,14 +35,14 @@
         <% listings.forEach (listing=>{ %>
             <div class="card mt-4 text-center">
                 <div class="card-body">
-                    <h4 class="card-title"><a href="/<%=listing.id%>">
+                    <h4 class="card-title"><a href="/browse/<%=listing.id%>">
                             <%= listing.Title %>
                         </a></h4>
                     <div class="card-text mb-2">
                         Home Value: <%="$"+ listing.HomeValue %><br>
                             Listing Url: <a href="<%=listing.Url%>" target="_blank">Click here</a>
                     </div>
-                    <a href="/<%=listing.id%>" id="ReadMore" class="btn btn-primary">Read More</a>
+                    <a href="/browse/<%=listing.id%>" id="ReadMore" class="btn btn-primary">Read More</a>
                 </div>
             </div>
             <% }) %>

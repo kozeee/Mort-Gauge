@@ -32,10 +32,10 @@ app.post('/save', async (req, res) => {
     res.redirect("/")
 })
 
-app.get('/:id', async (req, res) => {
+app.get('/browse/:id', async (req, res) => {
     const listing = await db.findOne({ id: req.params.id })
-    listing.HomeSlider = listing.HomeValue.toString().replace(/\D/g, '')
     if (listing === null) res.redirect('/browse')
+    listing.HomeSlider = listing.HomeValue.toString().replace(/\D/g, '')
     res.render('index.ejs', { listing: listing })
 })
 
